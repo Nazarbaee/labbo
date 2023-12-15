@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+   name: billy-service
+spec:
+   strategy:
+    type: Recreate
+   selector:
+    matchLabels:
+      app: billy-service
+   template:
+    metadata:
+      labels:
+        app: billy-service
+    spec:
+      containers:
+      - name: billy-service
+        image: Naz/Billing-service:latest
+        imagePullPolicy: Always
+        env:
+        - name: ASPNETCORE_ENVIRONMENT
+          value: Production
+        - name: BillingServicePath
+          value: /usr/data
+        ports:
+        - containerPort: 5006  
+        volumeMounts:
+        - name: sqlite-volume
+          mountPath: /usr/data
+      volumes:
+      - name: sqlite-volume
+        persistentVolumeClaim:
+          claimName: sqlite-pvc
